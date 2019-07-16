@@ -1,0 +1,152 @@
+<VSeparator@Widget>:
+    size_hint_y: None
+    height: dp(2)
+    canvas:
+        Color:
+            rgba: .5, .5, .5, .8
+        Rectangle:
+            pos: self.x, self.y + self.height
+            size: self.size
+
+<HSeparator@Widget>:
+    size_hint_x: None
+    width: dp(2)
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<TextInput>
+    background_normal: ''
+    background_color: .2,.2,.2,.1
+
+<Label, Button, TextInput>
+    color: .2,.2,.2,1
+
+<Button, NewContactButton>:
+    background_normal: ''
+    background_color: .3, .6, .8, 1
+
+
+<BoxLayout, StackLayout>
+    canvas.before:
+        Color:
+            rgba: .85, .95, .95, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+
+<ContactList>
+    orientation: "vertical"
+    size_hint: 1, None
+
+
+<ContactBox>
+    size_hint: 1, None
+    size: 150, 100
+    orientation: "vertical"
+
+    VSeparator
+    Label:
+        size_hint: 1, None
+        size: 150, 20
+        font_size: 16
+        text: "" # self.parent.username
+
+
+
+
+<ContactField, ContactFieldEditable>
+    orientation: "lr-tb"
+    padding: 20, 1, 1, 1,
+    spacing: 1,1
+    background_color: 1,0,0,1
+
+    Label:
+        size_hint: .3, None
+        size: 200, 30
+        text: self.parent.fieldname
+        text_size: self.width, self.height
+        valign: "middle"
+        halign: "left"
+
+
+<ContactField>
+    Label:
+        size_hint: .7, None
+        size: 200, 30
+        text: self.parent.value
+        text_size: self.size
+        valign: "middle"
+        halign: "left"
+
+
+<ContactFieldEditable>
+    size_hint: .9, None
+    size: 70, 40
+    txt_inpt: txt_inpt
+    TextInput:
+        id: txt_inpt
+        multiline: False
+        size_hint: .7, None
+        size: 200, 30
+        text: self.parent.value
+        text_size: self.size
+        halign: "left"
+    VSeparator
+
+<ContactDetails>
+    pos_y: 1
+
+
+
+<NewContactButton, SortByDropDown>
+    size: 200, 30
+
+<SortByDropDown>
+    size_hint: 1, None
+    text: "Sort by"
+
+<NewContactButton>
+    size_hint: .4, None
+    size: 200, 50
+    text: "New contact"
+    background_color: .4,.8,.4,1
+
+
+<ContactsScreen>
+    left_col: left_col
+    right_col: right_col
+    header: header
+
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            id: header
+            size_hint: 1, None
+            size: 200, 60
+
+        BoxLayout:
+            orientation: "horizontal"
+            BoxLayout:
+                id: left_col
+                orientation: "vertical"
+                size_hint: .4, 1
+
+            BoxLayout:
+                id: right_col
+                orientation: "vertical"
+                size_hint: .6, 1
+
+
+
+
+
+
+
+
