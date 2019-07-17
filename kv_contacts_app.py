@@ -17,6 +17,7 @@ from kivy.core.window import Window
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 
 from kivy.clock import Clock
+from functools import partial
 
 import phonebook
 
@@ -49,22 +50,39 @@ class SortByDropDown(Button):
         self.contact_list.draw_all_contacts(sortedby=key)
 
 
+class SearchBox(BoxLayout):
+    search_box = ObjectProperty(None)
+
+    def __init__(self):
+        super(SearchBox, self).__init__()
+        self.search_box.bind(text = self.search)
+
+    def search(self, instance, text):
+        print(text)
+        ContactList.search_tool(text)
+        ContactList.force_redrawing(text)
+
+
+
 class ContactList(BoxLayout):
     force_redrawing = None
+    search_tool =None
 
     def __init__(self):
         self.sortedby = None
+        self.search_string = None
         super(ContactList, self).__init__()
 
         self.draw_all_contacts()
         ContactList.force_redrawing = Clock.create_trigger(self.need_redraw)
+        ContactList.search_tool = self.st
 
-    def draw_all_contacts(self, sortedby="Name"):
+    def draw_all_contacts(self, sortedby="Name", searchby=None):
         self.sortedby = sortedby if sortedby is not None else self.sortedby
         for x in [x for x in self.children]:
             self.remove_widget(x)
 
-        all_cd = phonebook.contactManager.get_all_contacts_data()
+        all_cd = phonebook.contactManager.get_all_contacts_data(require_in_fields=searchby)
         ls = list(all_cd.values())
 
         if len(ls) == 0:
@@ -79,9 +97,10 @@ class ContactList(BoxLayout):
             super(ContactList, self).add_widget(cb)
 
     def need_redraw(self, x):
-        print(x)
-        self.draw_all_contacts()
+        self.draw_all_contacts(searchby=self.search_string)
 
+    def st(self, string=None):
+        self.search_string = string
 
 
 class ContactField(StackLayout):
@@ -225,6 +244,7 @@ class ContactsScreen(BoxLayout):
         contactlist.add_widget(contactlist_box)
 
         self.left_col.add_widget(SortByDropDown(contactlist_box))
+        self.left_col.add_widget(SearchBox())
         self.left_col.add_widget(contactlist)
 
         # building the right col

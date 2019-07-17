@@ -39,7 +39,12 @@
             pos: self.pos
             size: self.size
 
-
+<SearchBox>
+    search_box: search_box
+    size_hint: 1, None
+    size: 30,30
+    TextInput:
+        id: search_box
 
 <ContactList>
     orientation: "vertical"
@@ -57,8 +62,6 @@
         size: 150, 20
         font_size: 16
         text: "" # self.parent.username
-
-
 
 
 <ContactField, ContactFieldEditable>

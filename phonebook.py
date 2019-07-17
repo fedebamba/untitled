@@ -54,10 +54,10 @@ class ContactManager:
     def __init__(self):
         self.contact_loader = ContactLoader()
 
-    def get_all_contacts_data(self, deleted=False):
+    def get_all_contacts_data(self, deleted=False, require_in_fields=None):
         if len(self.contact_loader.all_contacts) == 0:
             return {}
-        return { username: self.contact_loader.all_contacts[username] for username in self.contact_loader.all_contacts.keys() if self.condition(self.contact_loader.all_contacts[username], deleted=deleted) }
+        return { username: self.contact_loader.all_contacts[username] for username in self.contact_loader.all_contacts.keys() if self.condition(self.contact_loader.all_contacts[username], deleted=deleted, require_in_fields=require_in_fields) }
 
     def get_single_contact_data(self, username = None, force=False):
         if username is not None:
@@ -66,10 +66,12 @@ class ContactManager:
                     return self.contact_loader.all_contacts[username]
         return None
 
-    def condition(self, user_data, deleted):
+    def condition(self, user_data, deleted, require_in_fields=None):
+        require_in_fields = ""if require_in_fields is None else require_in_fields
+        has_string = len([user_data[k] for k in user_data.keys() if k != "deleted" and require_in_fields in user_data[k]])>0 # there is at least one element that respects the search parameters
         if "deleted" in user_data.keys():
-            return user_data["deleted"] == deleted
-        return not deleted  # the assumption here is that if there's no "deleted" field, the element has not been deleted; the search should return true if deleted = false and vice versa
+            return (user_data["deleted"] == deleted) and has_string
+        return not deleted and has_string # the assumption here is that if there's no "deleted" field, the element has not been deleted; the search should return true if deleted = false and vice versa
 
     def retrieve_fields(self):
         return self.contact_loader.fields
