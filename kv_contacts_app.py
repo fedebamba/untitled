@@ -23,8 +23,6 @@ import phonebook
 
 
 class TrashBinPopup(Popup):
-
-
     def __init__(self):
         super(TrashBinPopup, self).__init__()
 
@@ -55,10 +53,10 @@ class TrashBinPopup(Popup):
             el = BoxLayout(orientation="horizontal")
             el.add_widget(Label(text=deleted_els[x]["Contact"], size_hint=(.8, None)))
 
-            recovery_button = Button(size_hint=(.1, None))
+            recovery_button = Button(text="Recover", size_hint=(.3, None), background_color=(.4, .8, .4, 1))
             recovery_button.bind(on_press=partial(self.recovery_el, x))
             el.add_widget(recovery_button)
-            delete_button = Button(size_hint=(.1, None))
+            delete_button = Button(text="Delete", size_hint=(.3, None), background_color=(.8,.4,.4,1))
             delete_button.bind(on_press=partial(self.delete_el, x))
             el.add_widget(delete_button)
             box.add_widget(el)
