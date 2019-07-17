@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.app import runTouchApp
+from kivy.core.window import Window
 
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -24,6 +25,10 @@ import phonebook
 
 class TrashBinPopup(Popup):
     def __init__(self):
+        self.size_hint = (None, None)
+        self.size = (Window.size[0] * .8, Window.size[1] * .8)
+        self.title = "Trash Bin"
+
         super(TrashBinPopup, self).__init__()
 
         outerbox = BoxLayout(orientation="vertical")
@@ -45,18 +50,17 @@ class TrashBinPopup(Popup):
     def create_list(self):
         for x in [x for x in self.box.children]:
             self.box.remove_widget(x)
-
         box = BoxLayout(orientation="vertical")
 
         deleted_els = phonebook.contactManager.get_all_contacts_data(deleted=True)
         for x in deleted_els:
-            el = BoxLayout(orientation="horizontal")
-            el.add_widget(Label(text=deleted_els[x]["Contact"], size_hint=(.8, None)))
+            el = BoxLayout(orientation="horizontal", size_hint=(.8, None), size=(300, 50))
+            el.add_widget(Label(text=deleted_els[x]["Contact"], size_hint=(.8, None), size=(300, 50)))
 
-            recovery_button = Button(text="Recover", size_hint=(.3, None), background_color=(.4, .8, .4, 1))
+            recovery_button = Button(text="Recover", size_hint=(.3, None), size=(300, 50), background_color=(.4, .8, .4, 1))
             recovery_button.bind(on_press=partial(self.recovery_el, x))
             el.add_widget(recovery_button)
-            delete_button = Button(text="Delete", size_hint=(.3, None), background_color=(.8,.4,.4,1))
+            delete_button = Button(text="Delete", size_hint=(.3, None), size=(300, 50), background_color=(.8,.4,.4,1))
             delete_button.bind(on_press=partial(self.delete_el, x))
             el.add_widget(delete_button)
             box.add_widget(el)
