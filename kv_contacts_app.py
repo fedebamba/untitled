@@ -22,6 +22,57 @@ from functools import partial
 import phonebook
 
 
+class TrashBinPopup(Popup):
+
+
+    def __init__(self):
+        super(TrashBinPopup, self).__init__()
+
+        outerbox = BoxLayout(orientation="vertical")
+
+        self.box = BoxLayout()
+        self.box.add_widget(self.create_list())
+        outerbox.add_widget(self.box)
+
+
+        button1 = Button(text="Close trash Bin", size_hint=(.2, .2))
+        button1.bind(on_press=self.dismiss)
+        outerbox.add_widget(button1)
+        self.add_widget(outerbox)
+
+    def dismiss(self, *largs, **kwargs):
+        ContactList.force_redrawing()
+        super(TrashBinPopup, self).dismiss(*largs, **kwargs)
+
+    def create_list(self):
+        for x in [x for x in self.box.children]:
+            self.box.remove_widget(x)
+
+        box = BoxLayout(orientation="vertical")
+
+        deleted_els = phonebook.contactManager.get_all_contacts_data(deleted=True)
+        for x in deleted_els:
+            el = BoxLayout(orientation="horizontal")
+            el.add_widget(Label(text=deleted_els[x]["Contact"], size_hint=(.8, None)))
+
+            recovery_button = Button(size_hint=(.1, None))
+            recovery_button.bind(on_press=partial(self.recovery_el, x))
+            el.add_widget(recovery_button)
+            delete_button = Button(size_hint=(.1, None))
+            delete_button.bind(on_press=partial(self.delete_el, x))
+            el.add_widget(delete_button)
+            box.add_widget(el)
+        return box
+
+    def recovery_el(self, name, x):
+        phonebook.contactManager.recovery_contact(name)
+        self.box.add_widget(self.create_list())
+
+    def delete_el(self, name, x):
+        phonebook.contactManager.hdelete_contact(name)
+        self.box.add_widget(self.create_list())
+
+
 class NewContactButton(Button):
     def __init__(self, parent):
         self._parent = parent
@@ -61,7 +112,6 @@ class SearchBox(BoxLayout):
         print(text)
         ContactList.search_tool(text)
         ContactList.force_redrawing(text)
-
 
 
 class ContactList(BoxLayout):
@@ -232,8 +282,11 @@ class ContactsScreen(BoxLayout):
 
         #building the header
         self.header.add_widget(NewContactButton(self.right_col))
-        # self.header.add_widget(Button(text="Trash bin"))
-        self.header.add_widget(Label( size_hint=(.6, .6)))
+
+        trash = Button(text="trash", size_hint=(.15, None), size=(200, 50))
+        trash.bind(on_press=lambda x: TrashBinPopup().open())
+        self.header.add_widget(Label( size_hint=(.45, .6)))
+        self.header.add_widget(trash)
 
         # building the left column
 

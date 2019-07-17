@@ -39,7 +39,8 @@ class ContactLoader:
             return [row for row in reader]
 
     def hard_delete_contact_data(self, user=None):
-        pass
+        if user is not None:
+            del self.all_contacts[user]
 
     def retrieve_all_contacts_data(self):
         with open(self.contact_data_file, "r+") as json_file:
@@ -88,6 +89,14 @@ class ContactManager:
 
     def delete_contact(self, username):
         self.contact_loader.soft_delete_contact_data(username)
+        self.contact_loader.save_all_contacts_data()
+
+    def recovery_contact(self, username):
+        self.contact_loader.all_contacts[username]["deleted"] = False
+        self.contact_loader.save_all_contacts_data()
+
+    def hdelete_contact(self, username):
+        self.contact_loader.hard_delete_contact_data(username)
         self.contact_loader.save_all_contacts_data()
 
 contactManager = ContactManager()
